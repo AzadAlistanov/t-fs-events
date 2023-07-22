@@ -1,0 +1,77 @@
+body {
+  margin: 0;
+}
+
+.App {
+  width: 1000px;
+  margin: 10px auto;
+  padding: 40px;
+  background: #514785;
+}
+
+h1 {
+  text-align: center;
+  color: white;
+}
+
+p {
+  font-size: 30px;
+  color: white;
+  text-align: center;
+}
+
+li {
+  text-transform: uppercase;
+  list-style-type: none;
+
+  a {
+    text-decoration: none;
+    display: inline-block;
+    color: white;
+    padding: 20px 30px;
+    margin: 10px 20px;
+    border-radius: 10px;
+    font-family: 'Montserrat', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    background-image: linear-gradient(to right, #9EEFE1 0%, #4830F0 51%, #9EEFE1 100%);
+    background-size: 200% auto;
+    box-shadow: 0 0 20px rgba(0, 0, 0, .1);
+    transition: .5s;
+  }
+
+  a:hover {
+    background-position: right center;
+  }
+}
+
+.filter {
+  text-align: end;
+
+  input {
+    padding: 5px;
+    font-size: 18px;
+    margin: 2px;
+    background: #5144ef00;
+    color: white;
+  }
+}
+
+.venue {
+  width: 666px;
+  margin: auto;
+  color: white;
+  border-radius: 10px;
+  font-family: "Montserrat", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  background-size: 200% auto;
+  box-shadow: 0 0 20px rgb(0 0 0 / 10%);
+  transition: 0.5s;
+  padding: 13px;
+
+  span {
+    color: #00d500;
+  }
+
+}

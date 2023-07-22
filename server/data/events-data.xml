@@ -1,0 +1,62 @@
+<data>
+  <events>
+    <city>Москва</city>
+    <event>Интерактивная выставка «Робостанция»</event>
+    <venue>ВДНХ</venue>
+    <date>2023-07-25 10:00:00.000 +0300</date>
+  </events>
+  <events>
+    <city>Москва</city>
+    <event>Стэндап</event>
+    <venue>Guests in the city</venue>
+    <date>2023-08-20 15:00:00.000 +0300</date>
+  </events>
+  <events>
+    <city>Москва</city>
+    <event>Фестиваль «Цветочный джем»</event>
+    <venue>Новая площадь</venue>
+    <date>2023-07-28 10:00:00.000 +0300</date>
+  </events>
+  <events>
+    <city>СПб</city>
+    <event>Фестиваль Ethnoscope 2023</event>
+    <venue>Ленобласть, ж/д ст. Яппиля</venue>
+    <date>2023-07-29 20:00:00.000 +0300</date>
+  </events>
+  <events>
+    <city>СПб</city>
+    <event>Концерт группы "Ундервуд"</event>
+    <venue>Южная дорога, д. 28/1</venue>
+    <date>2023-07-29 18:00:00.000 +0300</date>
+  </events>
+  <events>
+    <city>СПб</city>
+    <event>Концерт группы "Моя Мишель"</event>
+    <venue>пр. Невский, д. 35</venue>
+    <date>2023-07-27 19:00:00.000 +0300</date>
+  </events>
+  <events>
+    <city>Екатеринбург</city>
+    <event>Вечеринка «Element of Water»</event>
+    <venue>клуб Cuba-Cuba</venue>
+    <date>2023-08-02 19:00:00.000 +0300</date>
+  </events>
+  <events>
+    <city>Екатеринбург</city>
+    <event>Фитнес-тур BKYRD Sochi Tour</event>
+    <venue>Красная Поляна</venue>
+    <date>2023-08-27 19:00:00.000 +0300</date>
+  </events>
+  <events>
+    <city>Екатеринбург</city>
+    <event>Концерт группы "Моя Мишель"</event>
+    <venue>пр. Невский, д. 35</venue>
+    <date>2023-07-27 19:00:00.000 +0300</date>
+  </events>
+  <events>
+    <city>Нижний Новгород</city>
+    <event>Выставка «Роскошь званого обеда»</event>
+    <venue>Буфетн парадной анфилады второго этажа Усадьбы</venue>
+    <date>2023-08-05 19:00:00.000 +0300</date>
+  </events>
+</data>

@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "alistanov",
+    "password": "123",
+    "database": "eventsdb",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "alistanov",
+    "password": "123",
+    "database": "eventsdb",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "alistanov",
+    "password": "123",
+    "database": "eventsdb",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  }
+}
