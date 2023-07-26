@@ -8,14 +8,15 @@ function App() {
   return (
     <div className="App">
       <NavBar />
-      <Routes>
-        <Route exact path="/" element={<CityList />} />
+      <div className='scroll-inner'>
+        <Routes>
+          <Route exact path="/" element={<CityList />} />
 
 
-        <Route exact path="/city/:cityId" element={<EventList />} />
-        <Route exact path="/event/:eventId" element={<Venue />} />
-      </Routes>
-
+          <Route exact path="/city/:cityId" element={<EventList />} />
+          <Route exact path="/event/:eventId" element={<Venue />} />
+        </Routes>
+      </div>
     </div>
   );
 }

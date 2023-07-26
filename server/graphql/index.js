@@ -8,7 +8,7 @@ const {
   GraphQLString,
   GraphQLInt,
   GraphQLScalarType } = require('graphql');
-const { City, Event_Venue_City, Event, Venue } = require('../db/models');
+const { City, Event_Venue_City, Event, Venue, Tag, Category } = require('../db/models');
 
 const DateScalar = new GraphQLScalarType({
   name: 'Date',
@@ -29,40 +29,78 @@ const DateScalar = new GraphQLScalarType({
 
 async function parseXMLFile(filePath) {
   try {
+
     await City.destroy({ where: {}, truncate: true });
     await Event.destroy({ where: {}, truncate: true });
     await Venue.destroy({ where: {}, truncate: true });
     await Event_Venue_City.destroy({ where: {}, truncate: true });
+    await Tag.destroy({ where: {}, truncate: true });
+    await Category.destroy({ where: {}, truncate: true });
 
     const data = await fs.promises.readFile(filePath, 'utf-8');
     const xmlData = await parseStringPromise(data);
-    const xmlDataArr = xmlData.data.events;
+    const xmlDataArr = xmlData.subevents.subevent;
+
+    const chunkSize = 300;
+    const chunkedArray = xmlDataArr.slice(0, chunkSize);
 
     for (const el of xmlDataArr) {
-      const cityName = el.city.join();
-      const eventName = el.event.join();
+      const cityRegion = el.region.join();
+      const eventTitle = el.title.join();
+      const eventDate = el.date.join();
       const venueName = el.venue.join();
-      const eventDate = new Date(el.date.join());
+      const venueDescription = el.description[0].replace(/<\/?p>/g, '');
+      const venueAge = el.age.join();
+      const venueUrl = el.url.join();
+      const venueMin_price = el.min_price.join();
+      const venueMax_price = el.max_price.join();
+      const categoryName = el.category.join();
+      const tagName = el.web_tag_groups.join();
 
       const [city] = await City.findOrCreate({
-        where: { city: cityName },
-        defaults: { city: cityName }
+        where: { region: cityRegion },
+        defaults: { region: cityRegion }
       });
 
       const [event] = await Event.findOrCreate({
-        where: { event: eventName },
-        defaults: { event: eventName, date: eventDate }
+        where: { title: eventTitle },
+        defaults: { event: eventTitle, date: eventDate }
       });
 
       const [venue] = await Venue.findOrCreate({
         where: { venue: venueName },
-        defaults: { venue: venueName }
+        defaults: {
+          venue: venueName,
+          description: venueDescription,
+          url: venueUrl,
+          age: venueAge,
+          min_price: venueMin_price,
+          max_price: venueMax_price,
+        }
       });
 
-      await Event_Venue_City.create({
+
+      await Event_Venue_City.findOrCreate({
+        where: {
+          event_id: event.id,
+          venue_id: venue.id,
+          city_id: city.id
+        },
+        defaults: {
+          event_id: event.id,
+          venue_id: venue.id,
+          city_id: city.id
+        }
+      });
+
+      await Category.create({
         event_id: event.id,
-        venue_id: venue.id,
-        city_id: city.id
+        category: categoryName,
+      });
+
+      await Tag.create({
+        tag: tagName,
+        event_id: event.id,
       });
     }
   } catch (e) {
@@ -74,7 +112,7 @@ const CityType = new GraphQLObjectType({
   name: 'City',
   fields: () => ({
     id: { type: GraphQLNonNull(GraphQLInt) },
-    city: { type: GraphQLNonNull(GraphQLString) }
+    region: { type: GraphQLNonNull(GraphQLString) }
   })
 });
 
@@ -82,8 +120,10 @@ const EventType = new GraphQLObjectType({
   name: 'Event',
   fields: () => ({
     id: { type: GraphQLNonNull(GraphQLInt) },
-    event: { type: GraphQLNonNull(GraphQLString) },
+    title: { type: GraphQLNonNull(GraphQLString) },
     date: { type: GraphQLNonNull(DateScalar) },
+    category: { type: GraphQLString },
+    tag: { type: GraphQLString },
   })
 });
 
@@ -92,14 +132,35 @@ const VenueType = new GraphQLObjectType({
   fields: () => ({
     id: { type: GraphQLNonNull(GraphQLInt) },
     venue: { type: GraphQLNonNull(GraphQLString) },
+    description: { type: GraphQLNonNull(GraphQLString) },
+    url: { type: GraphQLNonNull(GraphQLString) },
+    age: { type: GraphQLNonNull(GraphQLString) },
+    min_price: { type: GraphQLNonNull(GraphQLString) },
+    max_price: { type: GraphQLNonNull(GraphQLString) },
     date: { type: GraphQLNonNull(DateScalar) },
+  })
+});
+
+const CategoryType = new GraphQLObjectType({
+  name: 'Category',
+  fields: () => ({
+    id: { type: GraphQLNonNull(GraphQLInt) },
+    category: { type: GraphQLNonNull(GraphQLString) },
+  })
+});
+
+const TagType = new GraphQLObjectType({
+  name: 'Tag',
+  fields: () => ({
+    id: { type: GraphQLNonNull(GraphQLInt) },
+    tag: { type: GraphQLNonNull(GraphQLString) },
   })
 });
 
 
 const getAllCitiesResolver = async () => {
   try {
-    await parseXMLFile('data/events-data.xml');
+    // await parseXMLFile('data/export.xml');
     const cities = await City.findAll();
     return cities;
   } catch (e) {
@@ -107,19 +168,38 @@ const getAllCitiesResolver = async () => {
   }
 };
 
-const getEventsByCityResolver = async (parent, { cityId }) => {
-  try {
 
+
+const getEventsByCityResolver = async (parent, { cityId, category, tag }) => {
+  try {
     const eventVenueCityRecords = await Event_Venue_City.findAll({
       where: { city_id: cityId },
       include: { model: Event }
     });
+
     const events = eventVenueCityRecords.map(({ Event }) => Event);
-    return events;
+
+    const eventsWithCategoryTag = await Promise.all(events.map(async (event) => {
+      const categoryData = await Category.findOne({ where: { event_id: event.id } });
+      const tagData = await Tag.findOne({ where: { event_id: event.id } });
+
+      return {
+        ...event.dataValues,
+        category: categoryData ? categoryData.category : null,
+        tag: tagData ? tagData.tag : null,
+      };
+    }));
+
+    return eventsWithCategoryTag.filter((event) => {
+      if (category && event.category !== category) return false;
+      if (tag && event.tag !== tag) return false;
+      return true;
+    });
   } catch (e) {
     console.log('Ошибка при получении списка событий по id города:', e.message);
   }
 };
+
 
 const getVenueByEventResolver = async (parent, { eventId }) => {
   try {
@@ -130,12 +210,11 @@ const getVenueByEventResolver = async (parent, { eventId }) => {
         { model: Event }
       ]
     });
-    const venue = eventVenueCityRecord.Venue.dataValues.venue;
+    const venue = eventVenueCityRecord.Venue.dataValues;
     const eventDate = eventVenueCityRecord.Event.date;
 
     return [{
-      id: eventVenueCityRecord.Venue.dataValues.id,
-      venue,
+      ...venue,
       date: eventDate,
     }];
 
@@ -154,7 +233,9 @@ const RootQueryType = new GraphQLObjectType({
     getEventsByCity: {
       type: GraphQLList(EventType),
       args: {
-        cityId: { type: GraphQLNonNull(GraphQLInt) }
+        cityId: { type: GraphQLNonNull(GraphQLInt) },
+        category: { type: GraphQLString },
+        tag: { type: GraphQLString },
       },
       resolve: getEventsByCityResolver,
     },

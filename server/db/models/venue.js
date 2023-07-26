@@ -10,7 +10,13 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Venue.init({
-    venue: DataTypes.STRING
+    venue: DataTypes.STRING,
+    description: DataTypes.STRING,
+    url: DataTypes.STRING,
+    age: DataTypes.STRING,
+    min_price: DataTypes.STRING,
+    max_price: DataTypes.STRING,
+    google_address: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Venue',

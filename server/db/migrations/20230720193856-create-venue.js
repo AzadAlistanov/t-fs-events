@@ -11,6 +11,27 @@ module.exports = {
       venue: {
         type: Sequelize.STRING
       },
+      description: {
+        type: Sequelize.TEXT
+      },
+      image: {
+        type: Sequelize.STRING
+      },
+      url: {
+        type: Sequelize.STRING
+      },
+      age: {
+        type: Sequelize.STRING
+      },
+      min_price: {
+        type: Sequelize.STRING
+      },
+      max_price: {
+        type: Sequelize.STRING
+      },
+      google_address: {
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
